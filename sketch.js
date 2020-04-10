@@ -1,61 +1,52 @@
-const Engine = Matter.Engine;
-const World= Matter.World;
-const Bodies = Matter.Bodies;
+const { Engine, World, Bodies, Body, Mouse, MouseConstraint, Constraint, Composite, Detector } = Matter;
 
 var engine, world;
-var box1, pig1;
-var backgroundImage;
+var tanker;
+var angle = 0
+var canonBall;
+var shot;
+var ground;
+var ball_1, ball_2, ball_3
+var launcherX, launcherY;
+var flag = "start"
 
-function preload(){
-    backgroundImage=loadImage("sprites/bg.png");
-}
-function setup(){
-    var canvas = createCanvas(1200,400);
+function setup() {
+    var canvas = createCanvas(800, 500);
     engine = Engine.create();
     world = engine.world;
+    ground = new Ground(width / 2, height - 10, width, 30);
+    tanker = new Tanker(75, height - 110, 60, 30);
 
-    
-    ground = new Ground(600,height,1200,20)
+    ball_1 = new Ball(400, 50, 20)
+    ball_2 = new Ball(500, 100, 20)
+    ball_3 = new Ball(600, 150, 20)
 
-    box1 = new Box(700,320,70,70);
-    box2 = new Box(920,320,70,70);
-    pig1 = new Pig(810, 350);
-    log1 = new Log(810,260,300, PI/2);
+    canonBall = new CanonBall(20, 20);
 
-    box3 = new Box(700,240,70,70);
-    box4 = new Box(920,240,70,70);
-    pig3 = new Pig(810, 220);
 
-    log3 =  new Log(810,180,300, PI/2);
-
-    box5 = new Box(810,160,70,70);
-    log4 = new Log(760,120,150, PI/7);
-    log5 = new Log(870,120,150, -PI/7);
-
-    bird = new Bird(100,100);
-
+    shot = new ShootBall(canonBall.body, { x: 70, y: height - 220 });
 }
 
-function draw(){
-    background(backgroundImage);
-    Engine.update(engine);
-    console.log(box2.body.position.x);
-    console.log(box2.body.position.y);
-    console.log(box2.body.angle);
-    box1.display();
-    box2.display();
-    ground.display();
-    pig1.display();
-    log1.display();
+function draw() {
+    background(255)
+    Matter.Engine.update(engine);
+    ground.display()
+    ball_2.display()
+    ball_1.display()
+    ball_3.display();
+    canonBall.display();
+    tanker.display();
+    shot.display();
+    if (keyIsDown(UP_ARROW)) {
+        shot.attach(canonBall.body)
+    }
+}
 
-    box3.display();
-    box4.display();
-    pig3.display();
-    log3.display();
 
-    box5.display();
-    log4.display();
-    log5.display();
+function keyReleased() {
+    if (keyCode === DOWN_ARROW) {
+        flag = "launch"
 
-    bird.display();
+        shot.shoot()
+    }
 }
